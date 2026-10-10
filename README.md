@@ -1,18 +1,19 @@
-# Insurance Claim Outcome Prediction
+		# Claim Outcome Prediction API
 
 ## Overview
 
-This project predicts insurance claim outcomes using machine learning. It classifies claims into three categories: Paid, Partially Paid, and Denied.
+A machine learning project that predicts synthetic insurance claim outcomes using a Random Forest classifier. The API is built with FastAPI and provides interactive documentation through Swagger UI.
 
 ## Features
 
 * Synthetic insurance claim dataset generation
-* Data preprocessing and feature engineering
+* Data preprocessing and categorical encoding
+* Feature engineering
 * Random Forest classification
-* Class imbalance handling using balanced class weights
 * Model evaluation using accuracy, precision, recall, F1-score, and confusion matrix
-* REST API built with FastAPI
-* Interactive API documentation using Swagger UI
+* REST API for claim outcome predictions
+* Prediction class probabilities
+* Interactive API documentation
 
 ## Technologies
 
@@ -23,90 +24,57 @@ This project predicts insurance claim outcomes using machine learning. It classi
 * Uvicorn
 * Joblib
 
-## Project Structure
+## Dataset
 
-```text
-claim-outcome-prediction/
-├── train.py
-├── evaluate.py
-├── api.py
-├── claims.csv
-├── requirements.txt
-├── README.md
-└── models/
-    └── claim_model.joblib
-```
+The project uses 400 synthetically generated insurance claims. Features include payer, provider, CPT code, diagnosis code, billed amount, and patient age.
+
+The target classes are Paid, Partially_Paid, and Denied. The dataset is synthetic and is not representative of real insurance claims.
 
 ## Model Evaluation
 
-The current model was evaluated on a held-out test set of 80 records.
+The current test-set accuracy is 98.75% on an 80-record test set. Since the outcomes are generated using predefined synthetic rules, this result should not be interpreted as real-world predictive performance.
 
-| Metric                | Result |
-| --------------------- | -----: |
-| Accuracy              |    60% |
-| Paid recall           |    79% |
-| Partially Paid recall |    25% |
-| Denied recall         |     0% |
+## Setup
 
-The results show that the model performs better at identifying Paid claims than the other classes. The low recall for Denied claims is a limitation that needs further investigation and improvement.
+1. Create and activate a virtual environment.
 
-## Run Locally
+2. Install dependencies:
 
-### 1. Create a virtual environment
+   `pip install -r requirements.txt`
 
-```bash
-python -m venv venv
-```
+3. Generate the dataset:
 
-### 2. Activate the environment
+   `python train.py`
 
-Windows PowerShell:
+4. Train and evaluate the model:
 
-```powershell
-.\venv\Scripts\Activate.ps1
-```
+   `python evaluate.py`
 
-### 3. Install dependencies
+5. Start the API:
 
-```bash
-python -m pip install -r requirements.txt
-```
+   `python -m uvicorn api:app --reload`
 
-### 4. Generate the dataset
-
-```bash
-python train.py
-```
-
-### 5. Train and evaluate the model
-
-```bash
-python evaluate.py
-```
-
-### 6. Start the API
-
-```bash
-python -m uvicorn api:app --reload
-```
-
-Open http://127.0.0.1:8000/docs to test the prediction endpoint.
+6. Open `http://127.0.0.1:8000/docs`.
 
 ## API Endpoints
 
 * `GET /` — API welcome message
-* `GET /health` — API health check
-* `POST /predict` — Predict the outcome of an insurance claim
+* `GET /health` — health check
+* `POST /predict` — predicts the outcome for a claim
 
-## Limitations
+## Example Request
 
-The dataset is synthetic and contains only 400 records. The evaluation results may not generalize to real insurance claims. The model currently has zero recall for the Denied class, so it should not be used for actual claim decisions without further development, representative data, and validation.
+```json
+{
+  "payer": "Aetna",
+  "provider": "Dr. Kumar",
+  "cpt_code": "99213",
+  "diagnosis_code": "E11.9",
+  "billed_amount": 1200.0,
+  "patient_age": 45
+}
+```
 
-## Future Improvements
+## Disclaimer
 
-* Use a larger, representative dataset
-* Improve minority-class detection
-* Compare multiple classification algorithms
-* Perform cross-validation and hyperparameter tuning
-* Add automated tests and input validation
-* Monitor model performance on new data
+This is an educational demonstration using synthetic data. It must not be used to make actual insurance claim decisions.
